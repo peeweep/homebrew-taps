@@ -5,13 +5,12 @@ class Supersm < Formula
   sha256 "299699209c2af0f91edd659578116dbaac0aa0cd3bd0ad55be6571350fd448da"
   license "MIT"
 
-
-  depends_on "cmake" => :build
-  depends_on "boost"
-
   livecheck do
     url :homepage
   end
+
+  depends_on "cmake" => :build
+  depends_on "boost"
 
   def install
     system "cmake", "-S", ".", "-B", "build", *std_cmake_args
