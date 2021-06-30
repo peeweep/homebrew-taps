@@ -9,6 +9,9 @@ class Supersm < Formula
   depends_on "cmake" => :build
   depends_on "boost"
 
+  livecheck do
+    url :homepage
+  end
 
   def install
     system "cmake", "-S", ".", "-B", "build", *std_cmake_args
