@@ -8,6 +8,7 @@ class Supersm < Formula
   bottle do
     root_url "https://github.com/peeweep/homebrew-taps/releases/download/supersm-0.5.1"
     sha256 cellar: :any, arm64_big_sur: "ec2c73bb521e98c9c519d2c8f301ccb4d7fe9224610b19bfdaee9fdaf281ae3a"
+    sha256 cellar: :any, big_sur:       "d70a3dc92b686aafccd8258b7542a77d156c1f6b4548dd3ef967f13d80a7a648"
     sha256 cellar: :any, catalina:      "412a77752207b7fb523c9326338bb6ca5c0da3b9e73c4fac185cba1c178ee9d4"
   end
 
