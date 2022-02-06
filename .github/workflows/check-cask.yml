@@ -1,0 +1,85 @@
+name: Check Casks
+on:
+  pull_request:
+    branches:
+      - 'master'
+
+jobs:
+  # From https://github.com/AOSC-Dev/aosc-os-abbs/blob/ee560b97321637d7bd9a6c6d30a2cffbad62be03/.github/workflows/build-packages.yml#L67
+  get-packages:
+    runs-on: macos-latest
+    steps:
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Get packages from commits
+        uses: actions/github-script@v5
+        id: get-packages-from-commits
+        with:
+          script: |
+            let args = "";
+            const options = {};
+            options.listeners = {
+              stdout: (data) => {
+                args += data.toString();
+              }
+            };
+            await exec.exec('git', ['merge-base', 'origin/master', 'HEAD'], options);
+            const parent = args.split('\n');
+            args = "";
+            await exec.exec('git', ['diff', '--name-only', parent[0], 'HEAD', 'Casks/*.rb'], options);
+            const regex = /.*\/(.*)\.rb/;
+            const packages = args.split('\n').map(arg => regex.exec(arg)).filter(arg => Array.isArray(arg)).map(arg => arg[1]);
+            if (!Array.isArray(packages) || packages.length == 0) return;
+            return packages;
+
+    outputs:
+      matrix: ${{steps.get-packages-from-commits.outputs.result}}
+
+
+  check-casks:
+    needs: get-packages
+    if: ${{needs.get-packages.outputs.matrix}}
+    strategy:
+      matrix:
+        os: [macos-10.15, macos-11, macos-latest]
+        package: ${{fromJson(needs.get-packages.outputs.matrix)}}
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Cache Homebrew Bundler RubyGems
+        id: cache
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.set-up-homebrew.outputs.gems-path }}
+          key: ${{ runner.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
+          restore-keys: ${{ runner.os }}-rubygems-
+
+      - name: Install Homebrew Bundler RubyGems
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: brew install-bundler-gems
+
+      - name: Audit Casks
+        env:
+          PACKAGE: ${{matrix.package}}
+        run: |
+          brew audit --cask ${PACKAGE}
+          brew audit --new-cask ${PACKAGE}
+
+      - name: Style check
+        env:
+          PACKAGE: ${{matrix.package}}
+        run: brew style --fix ${PACKAGE}
+
+      - name: Check Install and Uninstall
+        env:
+          PACKAGE: ${{matrix.package}}
+        run: |
+          brew install --cask ${PACKAGE}
+          brew uninstall --cask ${PACKAGE}
