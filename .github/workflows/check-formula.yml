@@ -75,10 +75,13 @@ jobs:
           PACKAGE: ${{matrix.package}}
         run: brew test ${PACKAGE}
 
-      - name: Audit formula
+      - name: Audit strict formula
         env:
           PACKAGE: ${{matrix.package}}
-        run: |
-          brew audit --strict ${PACKAGE}
-          brew audit --new ${PACKAGE}
+        run: brew audit --strict ${PACKAGE}
+
+      - name: Audit new formula
+        env:
+          PACKAGE: ${{matrix.package}}
+        run: brew audit --new ${PACKAGE}
 
