@@ -4,6 +4,7 @@ class Supersm < Formula
   url "https://github.com/peeweep/supersm/archive/0.5.2.tar.gz"
   sha256 "299699209c2af0f91edd659578116dbaac0aa0cd3bd0ad55be6571350fd448da"
   license "MIT"
+  head "https://github.com/peeweep/supersm.git", branch: "master"
 
   livecheck do
     url :homepage

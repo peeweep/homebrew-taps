@@ -7,7 +7,8 @@ on:
 jobs:
   # From https://github.com/AOSC-Dev/aosc-os-abbs/blob/ee560b97321637d7bd9a6c6d30a2cffbad62be03/.github/workflows/build-packages.yml#L67
   get-packages:
-    runs-on: macos-latest
+    if: ${{ (github.base_ref == 'master') && (github.actor == 'peeweep') }}
+    runs-on: ubuntu-latest
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
@@ -43,9 +44,8 @@ jobs:
     if: ${{needs.get-packages.outputs.matrix}}
     strategy:
       matrix:
-        os: [macos-10.15, macos-11, macos-latest]
+        os: [macos-11]
         package: ${{fromJson(needs.get-packages.outputs.matrix)}}
-      fail-fast: false
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -83,3 +83,4 @@ jobs:
         run: |
           brew install --cask ${PACKAGE}
           brew uninstall --cask ${PACKAGE}
+

@@ -4,6 +4,7 @@ class Neovide < Formula
   url "https://github.com/neovide/neovide/archive/tags/0.7.0.tar.gz"
   sha256 "32b68b969cabe4d33c1974b21cc5324a86fe52bcff9645a7c9a53ecd69d9d535"
   license "MIT"
+  head "https://github.com/neovide/neovide.git", branch: "main"
 
   depends_on "cmake" => :build
   depends_on "rust" => :build
