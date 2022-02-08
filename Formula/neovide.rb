@@ -9,7 +9,7 @@ class Neovide < Formula
   bottle do
     root_url "https://ghcr.io/v2/peeweep/taps"
     rebuild 2
-    sha256 cellar: :any_skip_relocation, big_sur: "1f7f31f252c99c38d150f17732b4bc35fd3a4b07481a18d7f6f6643e40f4b92f"
+    sha256 cellar: :any_skip_relocation, big_sur: "93c6e4ae3ce247caaffdac7940a55b37efc2a4591ce8e4e4778a0cea30495b41"
   end
 
   depends_on "cmake" => :build
