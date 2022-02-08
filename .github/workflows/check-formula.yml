@@ -7,7 +7,8 @@ on:
 jobs:
   # From https://github.com/AOSC-Dev/aosc-os-abbs/blob/ee560b97321637d7bd9a6c6d30a2cffbad62be03/.github/workflows/build-packages.yml#L67
   get-packages:
-    runs-on: macos-latest
+    if: ${{ (github.base_ref == 'master') && (github.actor == 'peeweep') }}
+    runs-on: ubuntu-latest
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
@@ -43,9 +44,8 @@ jobs:
     if: ${{needs.get-packages.outputs.matrix}}
     strategy:
       matrix:
-        os: [macos-10.15, macos-11, macos-latest]
+        os: [macos-11]
         package: ${{fromJson(needs.get-packages.outputs.matrix)}}
-      fail-fast: false
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -53,10 +53,15 @@ jobs:
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@master
 
-      - name: Build from source
+      - name: Build bottle
         env:
           PACKAGE: ${{matrix.package}}
-        run: brew install --build-from-source ${PACKAGE}
+          TAPS_NAME: peeweep/taps
+          ROOT_URL: https://ghcr.io/v2/${{ github.repository }}
+        run: |
+          brew install --build-bottle ${PACKAGE}
+          # brew bottle ${TAPS_NAME}/${PACKAGE} --keep-old --root-url="${ROOT_URL}" --json
+          brew bottle ${TAPS_NAME}/${PACKAGE} --root-url="${ROOT_URL}" --json
 
       - name: Cache Homebrew Bundler RubyGems
         id: cache
@@ -84,4 +89,28 @@ jobs:
         env:
           PACKAGE: ${{matrix.package}}
         run: brew audit --new ${PACKAGE}
+
+      - name: Push bottle
+        env:
+          HOMEBREW_GITHUB_API_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          HOMEBREW_GITHUB_PACKAGES_USER: ${{ github.repository_owner }}
+          HOMEBREW_GITHUB_PACKAGES_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          ROOT_URL: https://ghcr.io/v2/${{ github.repository }}
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git checkout ${GITHUB_HEAD_REF}
+          git pull origin ${GITHUB_HEAD_REF}
+          brew pr-upload --root-url="${ROOT_URL}"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.head_ref }}
+
+            #      - name: Merge pull requests (automerge-action)
+            #        uses: pascalgn/automerge-action@v0.14.3
+            #        env:
+            #          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
