@@ -8,7 +8,7 @@ class Neovide < Formula
 
   bottle do
     root_url "https://ghcr.io/v2/peeweep/taps"
-    rebuild 1
+    rebuild 2
     sha256 cellar: :any_skip_relocation, big_sur: "1f7f31f252c99c38d150f17732b4bc35fd3a4b07481a18d7f6f6643e40f4b92f"
   end
 
