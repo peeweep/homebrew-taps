@@ -12,7 +12,7 @@ class Supersm < Formula
 
   bottle do
     root_url "https://ghcr.io/v2/peeweep/taps"
-    rebuild 1
+    rebuild 2
     sha256 cellar: :any, big_sur: "c3e97070d5a2e9708e5057301e8d8749d3161746c9c9f775348e21860595d1fd"
   end
 

@@ -8,11 +8,19 @@ jobs:
   # From https://github.com/AOSC-Dev/aosc-os-abbs/blob/ee560b97321637d7bd9a6c6d30a2cffbad62be03/.github/workflows/build-packages.yml#L67
   get-packages:
     if: ${{ (github.base_ref == 'master') && (github.actor == 'peeweep') }}
-    runs-on: ubuntu-latest
+      # runs-on: macos-latest
+    runs-on: macos-arm64
     steps:
+      - run: printenv
+      - uses: actions/checkout@v2
       - name: Set up Homebrew
         id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@master
+          #uses: Homebrew/actions/setup-homebrew@master
+        run: |
+          echo 123 > ~/file
+          #uname -a
+          #/usr/sbin/softwareupdate --install-rosetta --agree-to-license
+          #arch -arm64 /bin/bash -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/ineo6/homebrew-install/install.sh)"
 
       - name: Get packages from commits
         uses: actions/github-script@v5
@@ -41,7 +49,8 @@ jobs:
 
   check-formula:
     needs: get-packages
-    if: ${{needs.get-packages.outputs.matrix}}
+    # if: ${{needs.get-packages.outputs.matrix}}
+    if: ${{ (github.base_ref == 'master') && (github.actor == 'peeweep1') }}
     strategy:
       matrix:
         os: [macos-11]
@@ -51,7 +60,8 @@ jobs:
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@master
+          # uses: Homebrew/actions/setup-homebrew@master
+        run: arch -arm64 /bin/bash -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/ineo6/homebrew-install/install.sh)"
 
       - name: Build bottle
         env:
@@ -60,8 +70,8 @@ jobs:
           ROOT_URL: https://ghcr.io/v2/${{ github.repository }}
         run: |
           brew install --build-bottle ${PACKAGE}
-          # brew bottle ${TAPS_NAME}/${PACKAGE} --keep-old --root-url="${ROOT_URL}" --json
-          brew bottle ${TAPS_NAME}/${PACKAGE} --root-url="${ROOT_URL}" --json
+          brew bottle ${TAPS_NAME}/${PACKAGE} --keep-old --root-url="${ROOT_URL}" --json
+          # brew bottle ${TAPS_NAME}/${PACKAGE} --root-url="${ROOT_URL}" --json
 
       - name: Cache Homebrew Bundler RubyGems
         id: cache
@@ -91,6 +101,7 @@ jobs:
         run: brew audit --new ${PACKAGE}
 
       - name: Push bottle
+        if: ${{ (github.base_ref == 'master') && (github.actor == 'peeweep1') }}
         env:
           HOMEBREW_GITHUB_API_TOKEN: ${{secrets.GITHUB_TOKEN}}
           HOMEBREW_GITHUB_PACKAGES_USER: ${{ github.repository_owner }}
@@ -101,9 +112,10 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git checkout ${GITHUB_HEAD_REF}
           git pull origin ${GITHUB_HEAD_REF}
-          brew pr-upload --root-url="${ROOT_URL}"
+          brew pr-upload --keep-old --root-url="${ROOT_URL}"
 
       - name: Push changes
+        if: ${{ (github.base_ref == 'master') && (github.actor == 'peeweep1') }}
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
