@@ -1,8 +1,8 @@
 name: Check Formula
 on:
   pull_request:
-    branches:
-      - 'master'
+    paths:
+      - "Formula/*.rb"
 
 jobs:
   # From https://github.com/AOSC-Dev/aosc-os-abbs/blob/ee560b97321637d7bd9a6c6d30a2cffbad62be03/.github/workflows/build-packages.yml#L67
