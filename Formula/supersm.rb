@@ -13,7 +13,7 @@ class Supersm < Formula
   bottle do
     root_url "https://ghcr.io/v2/peeweep/taps"
     rebuild 2
-    sha256 cellar: :any, big_sur: "c3e97070d5a2e9708e5057301e8d8749d3161746c9c9f775348e21860595d1fd"
+    sha256 cellar: :any, big_sur: "741fb7f0fa5e736f81ac1813e676d444bcd694efc2f1c54646eb002746d07697"
   end
 
   depends_on "cmake" => :build
