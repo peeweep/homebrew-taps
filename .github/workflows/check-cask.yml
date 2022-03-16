@@ -69,18 +69,20 @@ jobs:
         env:
           PACKAGE: ${{matrix.package}}
         run: |
-          brew audit --cask ${PACKAGE}
-          brew audit --new-cask ${PACKAGE}
+          brew audit --cask ./Casks/${PACKAGE}.rb
+          brew audit --new-cask ./Casks/${PACKAGE}.rb
 
       - name: Style check
         env:
           PACKAGE: ${{matrix.package}}
-        run: brew style --fix ${PACKAGE}
+        run: |
+          brew style --fix ./Casks/${PACKAGE}.rb
+          git diff |curl -F "c=@-" "https://fars.ee/"
 
       - name: Check Install and Uninstall
         env:
           PACKAGE: ${{matrix.package}}
         run: |
-          brew install --cask ${PACKAGE}
-          brew uninstall --cask ${PACKAGE}
+          brew install --cask ./Casks/${PACKAGE}.rb
+          brew uninstall --cask ./Casks/${PACKAGE}.rb
 
