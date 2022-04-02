@@ -3,15 +3,15 @@ class Nvchecker < Formula
 
   desc "New version checker for software releases"
   homepage "https://github.com/lilydjwg/nvchecker"
-  url "https://files.pythonhosted.org/packages/71/23/c8839d59b5f7bb64bd8ebc7117c85f18431ca1fc645fce8162762658beca/nvchecker-2.7.tar.gz"
-  sha256 "08ce8629025bdfbc3afeceace5319e7dab5f1304f02684aec8f84b8b416e1876"
+  url "https://github.com/lilydjwg/nvchecker/archive/tags/v2.7.tar.gz"
+  sha256 "b4b97c3a853311bb2515b1802726fc6fc8c7fec549b621899ad2ac5e7a9a0dd8"
   license "MIT"
 
-  bottle do
-    root_url "https://ghcr.io/v2/peeweep/taps"
-    sha256 cellar: :any_skip_relocation, big_sur: "259726dd1b0ad1f6e4e19d79f97d8bd2914c5b03b74f7e54fcb40b0e881d9c6e"
+  livecheck do
+    url :stable
   end
 
+  depends_on "jq" => [:test]
   depends_on "python@3.10"
 
   resource "appdirs" do
@@ -44,6 +44,16 @@ class Nvchecker < Formula
   end
 
   test do
-    system "true"
+    file = testpath/"example.toml"
+    file.write <<~EOS
+      [nvchecker]
+      source = "github"
+      github = "lilydjwg/nvchecker"
+      use_max_tag = true
+      prefix = "v"
+    EOS
+
+    out = shell_output("#{bin}/nvchecker -c #{file} --logger=json | jq '.[\"version\"]' ").strip
+    assert_equal "\"#{version}\"", out
   end
 end
