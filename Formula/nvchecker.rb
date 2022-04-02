@@ -7,6 +7,11 @@ class Nvchecker < Formula
   sha256 "08ce8629025bdfbc3afeceace5319e7dab5f1304f02684aec8f84b8b416e1876"
   license "MIT"
 
+  bottle do
+    root_url "https://ghcr.io/v2/peeweep/taps"
+    sha256 cellar: :any_skip_relocation, big_sur: "259726dd1b0ad1f6e4e19d79f97d8bd2914c5b03b74f7e54fcb40b0e881d9c6e"
+  end
+
   depends_on "python@3.10"
 
   resource "appdirs" do
