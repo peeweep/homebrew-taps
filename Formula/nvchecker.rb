@@ -11,6 +11,12 @@ class Nvchecker < Formula
     url :stable
   end
 
+  bottle do
+    root_url "https://ghcr.io/v2/peeweep/taps"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, big_sur: "cbc8589c2e1d614ab832097f6303d2669c43a7021e871cccb8580c6dfdbb6039"
+  end
+
   depends_on "jq" => [:test]
   depends_on "python@3.10"
 
