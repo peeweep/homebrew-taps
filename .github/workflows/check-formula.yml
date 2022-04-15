@@ -90,27 +90,3 @@ jobs:
           PACKAGE: ${{matrix.package}}
         run: brew audit --new ${PACKAGE}
 
-      - name: Push bottle
-        env:
-          HOMEBREW_GITHUB_API_TOKEN: ${{secrets.GITHUB_TOKEN}}
-          HOMEBREW_GITHUB_PACKAGES_USER: ${{ github.repository_owner }}
-          HOMEBREW_GITHUB_PACKAGES_TOKEN: ${{secrets.GITHUB_TOKEN}}
-          ROOT_URL: https://ghcr.io/v2/${{ github.repository }}
-        run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-          git checkout ${GITHUB_HEAD_REF}
-          git pull origin ${GITHUB_HEAD_REF}
-          brew pr-upload --root-url="${ROOT_URL}"
-
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.head_ref }}
-
-            #      - name: Merge pull requests (automerge-action)
-            #        uses: pascalgn/automerge-action@v0.14.3
-            #        env:
-            #          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
