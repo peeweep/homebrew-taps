@@ -45,8 +45,11 @@ jobs:
     strategy:
       matrix:
         os: [macos-11]
+        xcode: ["13.2"]
         package: ${{fromJson(needs.get-packages.outputs.matrix)}}
     runs-on: ${{ matrix.os }}
+    env:
+      DEVELOPER_DIR:  /Applications/Xcode_${{ matrix.xcode }}.app
 
     steps:
       - name: Set up Homebrew
