@@ -1,8 +1,8 @@
 class Supersm < Formula
   desc "Super Symlink Manager"
   homepage "https://github.com/peeweep/supersm"
-  url "https://github.com/peeweep/supersm/archive/0.5.2.tar.gz"
-  sha256 "299699209c2af0f91edd659578116dbaac0aa0cd3bd0ad55be6571350fd448da"
+  url "https://github.com/peeweep/supersm/archive/0.5.1.tar.gz"
+  sha256 "8625a8241f74ac4d928c8fa9d96700bee9cef63cea38194c67bd87c0545e9584"
   license "MIT"
   revision 1
 
